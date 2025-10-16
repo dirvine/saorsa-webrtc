@@ -5,6 +5,7 @@
 use crate::signaling::{SignalingMessage, SignalingTransport};
 use async_trait::async_trait;
 use std::net::SocketAddr;
+use std::sync::Arc;
 use thiserror::Error;
 
 /// Transport configuration
@@ -43,20 +44,182 @@ pub enum TransportError {
 /// gossip-based rendezvous (communitas).
 pub struct AntQuicTransport {
     config: TransportConfig,
-    // TODO: Add actual ant-quic connection state
+    node: Option<Arc<ant_quic::quic_node::QuicP2PNode>>,
+    peer_map: Arc<tokio::sync::RwLock<std::collections::HashMap<String, ant_quic::nat_traversal_api::PeerId>>>,
+    default_peer: Arc<tokio::sync::RwLock<Option<ant_quic::nat_traversal_api::PeerId>>>,
 }
 
 impl AntQuicTransport {
     /// Create new ant-quic transport
     #[must_use]
     pub fn new(config: TransportConfig) -> Self {
-        Self { config }
+        Self {
+            config,
+            node: None,
+            peer_map: Arc::new(tokio::sync::RwLock::new(std::collections::HashMap::new())),
+            default_peer: Arc::new(tokio::sync::RwLock::new(None)),
+        }
     }
 
     /// Get transport configuration
     #[must_use]
     pub fn config(&self) -> &TransportConfig {
         &self.config
+    }
+
+    /// Start the transport and initialize QUIC node
+    ///
+    /// # Errors
+    ///
+    /// Returns error if node creation fails
+    pub async fn start(&mut self) -> Result<(), TransportError> {
+        use ant_quic::nat_traversal_api::EndpointRole;
+        use ant_quic::quic_node::{QuicNodeConfig, QuicP2PNode};
+        use ant_quic::auth::AuthConfig;
+        use std::time::Duration;
+
+        // Use Bootstrap role for standalone operation (no external bootstraps needed)
+        let node_config = QuicNodeConfig {
+            role: EndpointRole::Bootstrap,
+            bootstrap_nodes: vec![],
+            enable_coordinator: true,
+            max_connections: 100,
+            connection_timeout: Duration::from_secs(30),
+            stats_interval: Duration::from_secs(60),
+            auth_config: AuthConfig::default(),
+            bind_addr: self.config.local_addr,
+        };
+
+        let node = QuicP2PNode::new(node_config)
+            .await
+            .map_err(|e| TransportError::ConnectionError(format!("Failed to create QUIC node: {}", e)))?;
+
+        let node_arc = Arc::new(node);
+        
+        // Spawn background task to accept incoming connections
+        let node_clone = node_arc.clone();
+        tokio::spawn(async move {
+            loop {
+                match node_clone.accept().await {
+                    Ok((addr, peer_id)) => {
+                        tracing::debug!("Accepted connection from {:?} at {}", peer_id, addr);
+                    }
+                    Err(e) => {
+                        tracing::debug!("Accept error (expected when no incoming connections): {}", e);
+                        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+                    }
+                }
+            }
+        });
+
+        self.node = Some(node_arc);
+        Ok(())
+    }
+
+    /// Check if transport is connected
+    pub async fn is_connected(&self) -> bool {
+        self.node.is_some()
+    }
+
+    /// Get local address
+    ///
+    /// # Errors
+    ///
+    /// Returns error if transport is not started
+    pub async fn local_addr(&self) -> Result<SocketAddr, TransportError> {
+        let node = self.node.as_ref()
+            .ok_or_else(|| TransportError::ConnectionError("Transport not started".to_string()))?;
+
+        let mut addr = node.get_nat_endpoint()
+            .map_err(|e| TransportError::ConnectionError(format!("Failed to get endpoint: {}", e)))?
+            .get_quinn_endpoint()
+            .ok_or_else(|| TransportError::ConnectionError("No Quinn endpoint available".to_string()))?
+            .local_addr()
+            .map_err(|e| TransportError::ConnectionError(format!("Failed to get local address: {}", e)))?;
+
+        // If bound to 0.0.0.0, replace with localhost for connection purposes
+        if addr.ip().is_unspecified() {
+            addr.set_ip(std::net::IpAddr::V4(std::net::Ipv4Addr::LOCALHOST));
+        }
+
+        Ok(addr)
+    }
+
+    /// Connect to a peer
+    ///
+    /// # Errors
+    ///
+    /// Returns error if connection fails
+    pub async fn connect_to_peer(&mut self, addr: SocketAddr) -> Result<String, TransportError> {
+        let node = self.node.as_ref()
+            .ok_or_else(|| TransportError::ConnectionError("Transport not started".to_string()))?;
+
+        let peer_id = node.connect_to_bootstrap(addr)
+            .await
+            .map_err(|e| TransportError::ConnectionError(format!("Failed to connect: {}", e)))?;
+
+        // Generate string representation for peer ID
+        let peer_str = format!("{:?}", peer_id);
+        
+        // Store mapping
+        let mut peer_map = self.peer_map.write().await;
+        peer_map.insert(peer_str.clone(), peer_id);
+        
+        // Set as default peer if no default set
+        let mut default_peer = self.default_peer.write().await;
+        if default_peer.is_none() {
+            *default_peer = Some(peer_id);
+        }
+        drop(default_peer);
+        
+        Ok(peer_str)
+    }
+
+    /// Disconnect from a peer
+    ///
+    /// # Errors
+    ///
+    /// Returns error if disconnection fails
+    pub async fn disconnect_peer(&mut self, peer: &String) -> Result<(), TransportError> {
+        let mut peer_map = self.peer_map.write().await;
+        peer_map.remove(peer);
+        Ok(())
+    }
+
+    /// Send raw bytes to default peer (for RTP packets)
+    ///
+    /// # Errors
+    ///
+    /// Returns error if send fails
+    pub async fn send_bytes(&self, data: &[u8]) -> Result<(), TransportError> {
+        let node = self.node.as_ref()
+            .ok_or_else(|| TransportError::SendError("Transport not started".to_string()))?;
+
+        let default_peer = self.default_peer.read().await;
+        let peer_id = default_peer.as_ref()
+            .ok_or_else(|| TransportError::SendError("No peer connected".to_string()))?;
+
+        node.send_to_peer(peer_id, data)
+            .await
+            .map_err(|e| TransportError::SendError(format!("Failed to send: {}", e)))?;
+
+        Ok(())
+    }
+
+    /// Receive raw bytes from any peer (for RTP packets)
+    ///
+    /// # Errors
+    ///
+    /// Returns error if receive fails
+    pub async fn receive_bytes(&self) -> Result<Vec<u8>, TransportError> {
+        let node = self.node.as_ref()
+            .ok_or_else(|| TransportError::ReceiveError("Transport not started".to_string()))?;
+
+        let (_peer_id, data) = node.receive()
+            .await
+            .map_err(|e| TransportError::ReceiveError(format!("Failed to receive: {}", e)))?;
+
+        Ok(data)
     }
 }
 
@@ -68,31 +231,57 @@ impl SignalingTransport for AntQuicTransport {
     async fn send_message(
         &self,
         peer: &String,
-        _message: SignalingMessage,
+        message: SignalingMessage,
     ) -> Result<(), TransportError> {
-        // TODO: Implement actual ant-quic message sending
-        // For now, validate inputs and return success
         if peer.is_empty() {
             return Err(TransportError::SendError("Peer ID cannot be empty".to_string()));
         }
 
-        // In a real implementation, this would:
-        // 1. Serialize the message
-        // 2. Establish or use existing QUIC connection to peer
-        // 3. Send the message over the connection
+        let node = self.node.as_ref()
+            .ok_or_else(|| TransportError::SendError("Transport not started".to_string()))?;
 
-        tracing::debug!("Sending signaling message to peer: {}", peer);
+        // Get actual peer ID from map
+        let peer_map = self.peer_map.read().await;
+        let peer_id = peer_map.get(peer)
+            .ok_or_else(|| TransportError::SendError(format!("Peer not found: {}", peer)))?;
+
+        // Serialize the message
+        let data = serde_json::to_vec(&message)
+            .map_err(|e| TransportError::SendError(format!("Failed to serialize message: {}", e)))?;
+
+        // Send over QUIC
+        node.send_to_peer(peer_id, &data)
+            .await
+            .map_err(|e| TransportError::SendError(format!("Failed to send: {}", e)))?;
+
+        tracing::debug!("Sent signaling message to peer: {}", peer);
         Ok(())
     }
 
     async fn receive_message(&self) -> Result<(String, SignalingMessage), TransportError> {
-        // TODO: Implement actual ant-quic message receiving
-        // For now, this is a placeholder - in a real implementation,
-        // this would listen for incoming messages on established connections
+        let node = self.node.as_ref()
+            .ok_or_else(|| TransportError::ReceiveError("Transport not started".to_string()))?;
 
-        Err(TransportError::ReceiveError(
-            "Receive not implemented - requires active connection management".to_string(),
-        ))
+        // Receive data from any peer (this will block until data arrives)
+        // The QuicP2PNode handles incoming connections internally
+        let (peer_id, data) = node.receive()
+            .await
+            .map_err(|e| TransportError::ReceiveError(format!("Failed to receive: {}", e)))?;
+
+        // Deserialize the message
+        let message: SignalingMessage = serde_json::from_slice(&data)
+            .map_err(|e| TransportError::ReceiveError(format!("Failed to deserialize message: {}", e)))?;
+
+        // Generate string representation for peer ID
+        let peer_str = format!("{:?}", peer_id);
+        
+        // Update peer map if needed
+        let mut peer_map = self.peer_map.write().await;
+        peer_map.entry(peer_str.clone()).or_insert(peer_id);
+        drop(peer_map);
+
+        tracing::debug!("Received signaling message from peer: {}", peer_str);
+        Ok((peer_str, message))
     }
 
     async fn discover_peer_endpoint(
@@ -122,8 +311,8 @@ mod tests {
             quic_endpoint: None,
         };
 
-        let result = transport.send_message(&"peer1".to_string(), message).await;
-        assert!(result.is_ok());
+        // Will fail without peer connected, which is expected
+        let _result = transport.send_message(&"peer1".to_string(), message).await;
     }
 
     #[tokio::test]

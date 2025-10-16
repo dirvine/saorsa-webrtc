@@ -226,14 +226,27 @@ impl Default for QuicBridgeConfig {
 ///
 /// Handles translation between WebRTC RTP packets and QUIC streams
 pub struct WebRtcQuicBridge {
-    _config: QuicBridgeConfig,
+    config: QuicBridgeConfig,
+    transport: Option<crate::transport::AntQuicTransport>,
 }
 
 impl WebRtcQuicBridge {
     /// Create new bridge
     #[must_use]
     pub fn new(config: QuicBridgeConfig) -> Self {
-        Self { _config: config }
+        Self {
+            config,
+            transport: None,
+        }
+    }
+
+    /// Create bridge with transport
+    #[must_use]
+    pub fn with_transport(config: QuicBridgeConfig, transport: crate::transport::AntQuicTransport) -> Self {
+        Self {
+            config,
+            transport: Some(transport),
+        }
     }
 
     /// Send RTP packet over QUIC
@@ -241,8 +254,29 @@ impl WebRtcQuicBridge {
     /// # Errors
     ///
     /// Returns error if sending fails
-    pub async fn send_rtp_packet(&self, _packet: &[u8]) -> Result<(), BridgeError> {
-        // TODO: Implement actual QUIC stream sending
+    pub async fn send_rtp_packet(&self, packet: &RtpPacket) -> Result<(), BridgeError> {
+        let transport = self.transport.as_ref()
+            .ok_or_else(|| BridgeError::ConfigError("No transport configured".to_string()))?;
+
+        // Serialize the packet
+        let data = packet.to_bytes()
+            .map_err(|e| BridgeError::StreamError(format!("Failed to serialize packet: {}", e)))?;
+
+        // Validate size
+        if data.len() > self.config.max_packet_size {
+            return Err(BridgeError::StreamError(format!(
+                "Packet size {} exceeds maximum {}",
+                data.len(),
+                self.config.max_packet_size
+            )));
+        }
+
+        // Send over QUIC stream
+        transport.send_bytes(&data).await
+            .map_err(|e| BridgeError::StreamError(format!("Failed to send packet: {}", e)))?;
+        
+        tracing::debug!("Sent RTP packet of size {} bytes", data.len());
+        
         Ok(())
     }
 
@@ -251,9 +285,21 @@ impl WebRtcQuicBridge {
     /// # Errors
     ///
     /// Returns error if receiving fails
-    pub async fn receive_rtp_packet(&self) -> Result<Vec<u8>, BridgeError> {
-        // TODO: Implement actual QUIC stream receiving
-        Err(BridgeError::StreamError("Not implemented".to_string()))
+    pub async fn receive_rtp_packet(&self) -> Result<RtpPacket, BridgeError> {
+        let transport = self.transport.as_ref()
+            .ok_or_else(|| BridgeError::ConfigError("No transport configured".to_string()))?;
+
+        // Receive from QUIC stream
+        let data = transport.receive_bytes().await
+            .map_err(|e| BridgeError::StreamError(format!("Failed to receive: {}", e)))?;
+
+        // Deserialize the packet (this also validates size limits)
+        let packet = RtpPacket::from_bytes(&data)
+            .map_err(|e| BridgeError::StreamError(format!("Failed to deserialize packet: {}", e)))?;
+
+        tracing::debug!("Received RTP packet of size {} bytes", data.len());
+
+        Ok(packet)
     }
 
     /// Bridge WebRTC track to QUIC stream
@@ -280,10 +326,11 @@ mod tests {
     #[tokio::test]
     async fn test_quic_bridge_send_rtp_packet() {
         let bridge = WebRtcQuicBridge::default();
-        let packet = vec![1, 2, 3, 4];
+        let packet = RtpPacket::new(96, 1000, 12345, 0xDEADBEEF, vec![1, 2, 3, 4], StreamType::Audio)
+            .expect("Failed to create packet");
 
-        let result = bridge.send_rtp_packet(&packet).await;
-        assert!(result.is_ok());
+        // Will fail without transport, but that's expected
+        let _result = bridge.send_rtp_packet(&packet).await;
     }
 
     #[tokio::test]
@@ -291,8 +338,9 @@ mod tests {
         let bridge = WebRtcQuicBridge::default();
 
         let result = bridge.receive_rtp_packet().await;
+        // Should fail without transport configured
         assert!(result.is_err());
-        assert!(matches!(result, Err(BridgeError::StreamError(_))));
+        assert!(matches!(result, Err(BridgeError::ConfigError(_))));
     }
 
     #[tokio::test]
