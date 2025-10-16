@@ -42,14 +42,21 @@ pub enum TransportError {
 /// It can be used with DHT-based peer discovery (saorsa-core) or
 /// gossip-based rendezvous (communitas).
 pub struct AntQuicTransport {
-    _config: TransportConfig,
+    config: TransportConfig,
+    // TODO: Add actual ant-quic connection state
 }
 
 impl AntQuicTransport {
     /// Create new ant-quic transport
     #[must_use]
     pub fn new(config: TransportConfig) -> Self {
-        Self { _config: config }
+        Self { config }
+    }
+
+    /// Get transport configuration
+    #[must_use]
+    pub fn config(&self) -> &TransportConfig {
+        &self.config
     }
 }
 
@@ -60,25 +67,112 @@ impl SignalingTransport for AntQuicTransport {
 
     async fn send_message(
         &self,
-        _peer: &String,
+        peer: &String,
         _message: SignalingMessage,
     ) -> Result<(), TransportError> {
-        // Implementation will depend on the actual transport mechanism
-        // (DHT for saorsa-core, gossip/rendezvous for communitas)
+        // TODO: Implement actual ant-quic message sending
+        // For now, validate inputs and return success
+        if peer.is_empty() {
+            return Err(TransportError::SendError("Peer ID cannot be empty".to_string()));
+        }
+
+        // In a real implementation, this would:
+        // 1. Serialize the message
+        // 2. Establish or use existing QUIC connection to peer
+        // 3. Send the message over the connection
+
+        tracing::debug!("Sending signaling message to peer: {}", peer);
         Ok(())
     }
 
     async fn receive_message(&self) -> Result<(String, SignalingMessage), TransportError> {
-        // Implementation will depend on the actual transport mechanism
+        // TODO: Implement actual ant-quic message receiving
+        // For now, this is a placeholder - in a real implementation,
+        // this would listen for incoming messages on established connections
+
         Err(TransportError::ReceiveError(
-            "Not implemented - use transport-specific implementation".to_string(),
+            "Receive not implemented - requires active connection management".to_string(),
         ))
     }
 
     async fn discover_peer_endpoint(
         &self,
-        _peer: &String,
+        peer: &String,
     ) -> Result<Option<SocketAddr>, TransportError> {
+        // TODO: Implement actual peer discovery via DHT or gossip
+        // For now, return None to indicate discovery not available
+
+        tracing::debug!("Attempting to discover endpoint for peer: {}", peer);
         Ok(None)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_ant_quic_transport_send_message_valid() {
+        let config = TransportConfig::default();
+        let transport = AntQuicTransport::new(config);
+
+        let message = SignalingMessage::Offer {
+            session_id: "test-session".to_string(),
+            sdp: "test-sdp".to_string(),
+            quic_endpoint: None,
+        };
+
+        let result = transport.send_message(&"peer1".to_string(), message).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_ant_quic_transport_send_message_empty_peer() {
+        let config = TransportConfig::default();
+        let transport = AntQuicTransport::new(config);
+
+        let message = SignalingMessage::Offer {
+            session_id: "test-session".to_string(),
+            sdp: "test-sdp".to_string(),
+            quic_endpoint: None,
+        };
+
+        let result = transport.send_message(&"".to_string(), message).await;
+        assert!(matches!(result, Err(TransportError::SendError(_))));
+    }
+
+    #[tokio::test]
+    async fn test_ant_quic_transport_receive_message() {
+        let config = TransportConfig::default();
+        let transport = AntQuicTransport::new(config);
+
+        let result = transport.receive_message().await;
+        assert!(matches!(result, Err(TransportError::ReceiveError(_))));
+    }
+
+    #[tokio::test]
+    async fn test_ant_quic_transport_discover_peer_endpoint() {
+        let config = TransportConfig::default();
+        let transport = AntQuicTransport::new(config);
+
+        let result = transport.discover_peer_endpoint(&"peer1".to_string()).await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().is_none());
+    }
+
+    #[test]
+    fn test_ant_quic_transport_config() {
+        let config = TransportConfig {
+            local_addr: Some("127.0.0.1:8080".parse().unwrap()),
+        };
+        let transport = AntQuicTransport::new(config.clone());
+
+        assert_eq!(transport.config().local_addr, config.local_addr);
+    }
+
+    #[test]
+    fn test_transport_config_default() {
+        let config = TransportConfig::default();
+        assert!(config.local_addr.is_none());
     }
 }

@@ -90,7 +90,9 @@ mod tests {
 
     #[test]
     fn test_peer_identity_from_string() {
-        let id = PeerIdentityString::from_string_repr("test-peer-id").ok().unwrap();
+        let id = PeerIdentityString::from_string_repr("test-peer-id")
+            .ok()
+            .unwrap();
         assert_eq!(id.as_str(), "test-peer-id");
     }
 

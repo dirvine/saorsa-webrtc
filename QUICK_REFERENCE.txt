@@ -1,0 +1,173 @@
+================================================================================
+SAORSA-CORE WEBRTC EXPLORATION - QUICK REFERENCE
+================================================================================
+
+LOCATION
+--------
+/Users/davidirvine/Desktop/Devel/projects/saorsa-core/src/messaging/webrtc/
+
+TOTAL CODE
+----------
+Core Implementation:     3,566 lines
+Bridge (QUIC):           470+ lines
+Tests & Integration:     130+ lines
+Total:                   ~4,200 lines
+
+FILES STRUCTURE
+---------------
+Main Directory:          src/messaging/webrtc/
+├─ mod.rs               (360 lines) - Main WebRtcService orchestrator
+├─ types.rs             (352 lines) - All data types/enums
+├─ call_manager.rs      (699 lines) - Call state management
+├─ signaling.rs         (799 lines) - Offer/Answer/ICE protocol (DHT integration)
+├─ media.rs             (890 lines) - Audio/video device management
+├─ integration_test.rs  (466 lines) - Test runner
+└─ tests/               (subdirectory)
+    ├─ call_flow_tests.rs
+    ├─ multi_party_tests.rs
+    ├─ media_streaming_tests.rs
+    └─ quic_connectivity_tests.rs
+
+Supporting Files:
+├─ src/messaging/webrtc_quic_bridge.rs   (470+ lines) - RTP to QUIC bridge
+├─ src/messaging/webrtc_tests.rs         (50+ lines)
+└─ tests/webrtc_quic_bridge_test.rs      (80 lines)
+
+INTEGRATION POINTS
+------------------
+1. DHT INTEGRATION (Signaling)
+   Location:  src/messaging/webrtc/signaling.rs
+   Type:      Arc<RwLock<DhtCoreEngine>>
+   Purpose:   Peer discovery, signaling routing
+
+2. QUIC INTEGRATION (Media Transport)
+   Location:  src/messaging/webrtc_quic_bridge.rs
+   Type:      Arc<P2PNetworkNode> from ant_quic_adapter
+   Purpose:   RTP/media streaming over QUIC
+
+3. EVENT BROADCASTING
+   Type:      tokio broadcast channels
+   Purpose:   WebRtcEvent -> Signaling/Media/Call events
+
+KEY TYPES EXPORTED
+------------------
+CallId, CallState, MediaConstraints, MediaType
+CallOffer, CallAnswer, IceCandidate
+CallQualityMetrics, CallSession
+CallArchitecture, MultiPartyCall
+RecordingConsent, ConsentStatus
+NativeQuicConfiguration
+WebRtcEvent, SignalingEvent, MediaEvent, CallEvent
+
+DEPENDENCIES TO REMOVE (10)
+----------------------------
+webrtc = "0.13"
+webrtc-ice = "0.13"
+webrtc-media = "0.10"
+webrtc-sctp = "0.12"
+webrtc-srtp = "0.15"
+webrtc-dtls = "0.12"
+webrtc-data = "0.11"
+interceptor = "0.14"
+rtcp = "0.13"
+rtp = "0.13"
+
+DEPENDENCIES TO ADD (1)
+-----------------------
+saorsa-webrtc = { path = "../saorsa-webrtc", version = "0.1.0" }
+
+MIGRATION SCOPE
+---------------
+Files to Delete:         4
+Files to Modify:         3
+Lines of Code to Remove: ~4,200
+Import Changes Only:     No logic changes needed
+
+FILES TO DELETE
+---------------
+✂ src/messaging/webrtc/                (entire directory, 3,566 lines)
+✂ src/messaging/webrtc_quic_bridge.rs  (470+ lines)
+✂ src/messaging/webrtc_tests.rs        (50+ lines)
+✂ tests/webrtc_quic_bridge_test.rs     (80 lines)
+
+FILES TO MODIFY
+---------------
+✏ Cargo.toml
+  - Line 118-128: Remove 10 webrtc dependencies
+  - Add: saorsa-webrtc dependency
+
+✏ src/messaging/mod.rs
+  - Line 22-23: Remove "pub mod webrtc;" and "pub mod webrtc_quic_bridge;"
+  - Line 49-50: Replace webrtc re-exports with saorsa_webrtc re-exports
+
+✏ src/messaging/service.rs
+  - Update type imports to use saorsa_webrtc
+
+PUBLIC API
+----------
+WebRtcService::new(local_identity, dht_client) -> Result<Self>
+WebRtcService::start() -> Result<()>
+WebRtcService::initiate_call(callee, constraints) -> Result<CallId>
+WebRtcService::accept_call(call_id, constraints) -> Result<()>
+WebRtcService::reject_call(call_id) -> Result<()>
+WebRtcService::end_call(call_id) -> Result<()>
+WebRtcService::get_call_state(call_id) -> Option<CallState>
+WebRtcService::subscribe_events() -> broadcast::Receiver<WebRtcEvent>
+
+DOCUMENTATION
+--------------
+Three detailed guides have been created:
+
+1. INTEGRATION_ANALYSIS.md (17KB)
+   - 15 comprehensive sections
+   - Architecture overview
+   - All integration points
+   - Migration guide
+   - Validation checklist
+
+2. KEY_FILES_SUMMARY.md (11KB)
+   - Code snippets for each file
+   - Type definitions
+   - Integration details
+   - Quick delete/modify lists
+
+3. EXPLORATION_COMPLETE.md (11KB)
+   - Summary statistics
+   - Quick reference overview
+   - Migration checklist
+   - Next steps
+
+MIGRATION STEPS
+---------------
+1. Prepare saorsa-webrtc with extracted code
+2. Update Cargo.toml in saorsa-core
+3. Update src/messaging/mod.rs imports
+4. Remove old files (4 files/directories)
+5. Run tests to verify
+6. Commit changes
+
+ARCHITECTURE STRENGTHS
+----------------------
+1. Clean separation: Signaling, Media, Call Management
+2. Event-driven: Async broadcasting
+3. P2P native: DHT discovery + QUIC transport
+4. Multi-party: Mesh and SFU support
+5. Quality aware: Metrics monitoring + adaptation
+6. Privacy-first: Recording consent, four-word addressing
+
+KEY INSIGHT
+-----------
+Uses QUIC for media transport instead of traditional ICE/STUN/TURN,
+bypassing UDP complexity while preserving WebRTC codec compatibility.
+
+QUICK STATS
+-----------
+Integration Points:      3 (DHT, QUIC, Events)
+Event Types:            3 (Signaling, Media, Call)
+Sub-event Types:        12+
+Public Types:           15+
+Tests Covered:          8 areas
+Minimal Import Changes:  Yes
+
+STATUS: ANALYSIS COMPLETE - READY FOR MIGRATION
+================================================================================

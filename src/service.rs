@@ -87,7 +87,7 @@ impl<I: PeerIdentity, T: SignalingTransport> WebRtcService<I, T> {
         let call_manager = Arc::new(
             CallManager::new(config.call_config)
                 .await
-                .map_err(|e| ServiceError::InitError(e.to_string()))?
+                .map_err(|e| ServiceError::InitError(e.to_string()))?,
         );
 
         Ok(Self {

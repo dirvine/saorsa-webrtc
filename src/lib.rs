@@ -12,21 +12,26 @@
 //! # Examples
 //!
 //! ```rust,no_run
-//! use saorsa_webrtc::{WebRtcService, MediaConstraints};
+//! use saorsa_webrtc::{WebRtcService, MediaConstraints, SignalingHandler, AntQuicTransport, TransportConfig};
+//! use std::sync::Arc;
 //!
 //! # async fn example() -> anyhow::Result<()> {
-//! // Create WebRTC service with your identity and signaling transport
-//! let service = WebRtcService::builder()
-//!     .with_identity("alice-bob-charlie-david")
-//!     .build()
-//!     .await?;
+//! // Create signaling transport
+//! let transport = Arc::new(AntQuicTransport::new(TransportConfig::default()));
+//! let signaling = Arc::new(SignalingHandler::new(transport));
+//!
+//! // Create WebRTC service
+//! let service = WebRtcService::<saorsa_webrtc::PeerIdentityString, AntQuicTransport>::new(
+//!     signaling,
+//!     Default::default()
+//! ).await?;
 //!
 //! // Start the service
 //! service.start().await?;
 //!
 //! // Initiate a video call
 //! let call_id = service.initiate_call(
-//!     "eve-frank-grace-henry",
+//!     saorsa_webrtc::PeerIdentityString::new("eve-frank-grace-henry"),
 //!     MediaConstraints::video_call()
 //! ).await?;
 //! # Ok(())
@@ -76,6 +81,7 @@ pub use identity::{PeerIdentity, PeerIdentityString};
 pub use media::{
     AudioDevice, AudioTrack, MediaEvent, MediaStream, MediaStreamManager, VideoDevice, VideoTrack,
 };
+pub use quic_bridge::{RtpPacket, StreamConfig, StreamType, WebRtcQuicBridge};
 pub use service::{WebRtcConfig, WebRtcEvent, WebRtcService, WebRtcServiceBuilder};
 pub use signaling::{
     SignalingHandler, SignalingMessage as SignalingMessageType, SignalingTransport,
@@ -85,7 +91,6 @@ pub use types::*;
 
 /// Prelude module for convenient imports
 pub mod prelude {
-    //! Convenient re-exports of commonly used types
     pub use crate::call::{CallManager, CallManagerConfig};
     pub use crate::identity::{PeerIdentity, PeerIdentityString};
     pub use crate::media::{MediaEvent, MediaStreamManager};

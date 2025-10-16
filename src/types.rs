@@ -444,18 +444,19 @@ impl<I: PeerIdentity> CallSession<I> {
 
     /// Add a participant
     pub fn add_participant(&mut self, participant: I) {
-        if !self.participants.iter().any(|p| {
-            p.to_string_repr() == participant.to_string_repr()
-        }) {
+        if !self
+            .participants
+            .iter()
+            .any(|p| p.to_string_repr() == participant.to_string_repr())
+        {
             self.participants.push(participant);
         }
     }
 
     /// Remove a participant
     pub fn remove_participant(&mut self, participant: &I) {
-        self.participants.retain(|p| {
-            p.to_string_repr() != participant.to_string_repr()
-        });
+        self.participants
+            .retain(|p| p.to_string_repr() != participant.to_string_repr());
     }
 
     /// Add quality metric

@@ -2,6 +2,8 @@
 //!
 //! Bridges WebRTC media with QUIC transport for data channels.
 
+use anyhow::Result;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// Bridge errors
@@ -14,6 +16,166 @@ pub enum BridgeError {
     /// Stream error
     #[error("Stream error: {0}")]
     StreamError(String),
+}
+
+/// Stream type classification for prioritization
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum StreamType {
+    /// Audio stream
+    Audio,
+    /// Video stream
+    Video,
+    /// Data channel
+    Data,
+    /// Screen sharing stream
+    ScreenShare,
+}
+
+impl StreamType {
+    /// Get priority value (lower = higher priority)
+    #[must_use]
+    pub const fn priority(&self) -> u8 {
+        match self {
+            Self::Audio => 1,       // Highest priority
+            Self::Video => 2,
+            Self::ScreenShare => 3,
+            Self::Data => 4,        // Lowest priority
+        }
+    }
+
+    /// Check if stream is real-time (audio/video)
+    #[must_use]
+    pub const fn is_realtime(&self) -> bool {
+        matches!(self, Self::Audio | Self::Video | Self::ScreenShare)
+    }
+}
+
+/// RTP packet structure for media transmission
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RtpPacket {
+    /// RTP header version (always 2)
+    pub version: u8,
+    /// Padding bit
+    pub padding: bool,
+    /// Extension bit
+    pub extension: bool,
+    /// CSRC count
+    pub csrc_count: u8,
+    /// Marker bit
+    pub marker: bool,
+    /// Payload type
+    pub payload_type: u8,
+    /// Sequence number
+    pub sequence_number: u16,
+    /// Timestamp
+    pub timestamp: u32,
+    /// SSRC identifier
+    pub ssrc: u32,
+    /// Payload data
+    pub payload: Vec<u8>,
+    /// Stream type classification
+    pub stream_type: StreamType,
+}
+
+impl RtpPacket {
+    /// Create new RTP packet
+    #[must_use]
+    pub fn new(
+        payload_type: u8,
+        sequence_number: u16,
+        timestamp: u32,
+        ssrc: u32,
+        payload: Vec<u8>,
+        stream_type: StreamType,
+    ) -> Self {
+        Self {
+            version: 2,
+            padding: false,
+            extension: false,
+            csrc_count: 0,
+            marker: false,
+            payload_type,
+            sequence_number,
+            timestamp,
+            ssrc,
+            payload,
+            stream_type,
+        }
+    }
+
+    /// Serialize packet to bytes for QUIC transmission
+    ///
+    /// # Errors
+    ///
+    /// Returns error if serialization fails
+    pub fn to_bytes(&self) -> Result<Vec<u8>> {
+        bincode::serialize(self)
+            .map_err(|e| anyhow::anyhow!("Failed to serialize RTP packet: {}", e))
+    }
+
+    /// Deserialize packet from bytes received via QUIC
+    ///
+    /// # Errors
+    ///
+    /// Returns error if deserialization fails
+    pub fn from_bytes(data: &[u8]) -> Result<Self> {
+        bincode::deserialize(data)
+            .map_err(|e| anyhow::anyhow!("Failed to deserialize RTP packet: {}", e))
+    }
+
+    /// Get packet size in bytes
+    #[must_use]
+    pub fn size(&self) -> usize {
+        12 + self.payload.len() // Basic RTP header is 12 bytes
+    }
+}
+
+/// Stream configuration for QUIC media streams
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StreamConfig {
+    /// Stream type
+    pub stream_type: StreamType,
+    /// Target bitrate in bits per second
+    pub target_bitrate_bps: u32,
+    /// Maximum bitrate in bits per second
+    pub max_bitrate_bps: u32,
+    /// Maximum latency in milliseconds
+    pub max_latency_ms: u32,
+}
+
+impl StreamConfig {
+    /// Create audio stream configuration
+    #[must_use]
+    pub fn audio() -> Self {
+        Self {
+            stream_type: StreamType::Audio,
+            target_bitrate_bps: 64_000,
+            max_bitrate_bps: 128_000,
+            max_latency_ms: 50,
+        }
+    }
+
+    /// Create video stream configuration
+    #[must_use]
+    pub fn video() -> Self {
+        Self {
+            stream_type: StreamType::Video,
+            target_bitrate_bps: 1_000_000,
+            max_bitrate_bps: 2_000_000,
+            max_latency_ms: 150,
+        }
+    }
+
+    /// Create screen share configuration
+    #[must_use]
+    pub fn screen_share() -> Self {
+        Self {
+            stream_type: StreamType::ScreenShare,
+            target_bitrate_bps: 500_000,
+            max_bitrate_bps: 1_500_000,
+            max_latency_ms: 200,
+        }
+    }
 }
 
 /// WebRTC to QUIC bridge configuration
@@ -44,10 +206,71 @@ impl WebRtcQuicBridge {
     pub fn new(config: QuicBridgeConfig) -> Self {
         Self { _config: config }
     }
+
+    /// Send RTP packet over QUIC
+    ///
+    /// # Errors
+    ///
+    /// Returns error if sending fails
+    pub async fn send_rtp_packet(&self, _packet: &[u8]) -> Result<(), BridgeError> {
+        // TODO: Implement actual QUIC stream sending
+        Ok(())
+    }
+
+    /// Receive RTP packet from QUIC
+    ///
+    /// # Errors
+    ///
+    /// Returns error if receiving fails
+    pub async fn receive_rtp_packet(&self) -> Result<Vec<u8>, BridgeError> {
+        // TODO: Implement actual QUIC stream receiving
+        Err(BridgeError::StreamError("Not implemented".to_string()))
+    }
+
+    /// Bridge WebRTC track to QUIC stream
+    ///
+    /// # Errors
+    ///
+    /// Returns error if bridging fails
+    pub async fn bridge_track(&self, _track_id: &str) -> Result<(), BridgeError> {
+        // TODO: Implement track bridging
+        Ok(())
+    }
 }
 
 impl Default for WebRtcQuicBridge {
     fn default() -> Self {
         Self::new(QuicBridgeConfig::default())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_quic_bridge_send_rtp_packet() {
+        let bridge = WebRtcQuicBridge::default();
+        let packet = vec![1, 2, 3, 4];
+
+        let result = bridge.send_rtp_packet(&packet).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_quic_bridge_receive_rtp_packet() {
+        let bridge = WebRtcQuicBridge::default();
+
+        let result = bridge.receive_rtp_packet().await;
+        assert!(result.is_err());
+        assert!(matches!(result, Err(BridgeError::StreamError(_))));
+    }
+
+    #[tokio::test]
+    async fn test_quic_bridge_bridge_track() {
+        let bridge = WebRtcQuicBridge::default();
+
+        let result = bridge.bridge_track("audio-track").await;
+        assert!(result.is_ok());
     }
 }
