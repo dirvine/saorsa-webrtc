@@ -252,6 +252,20 @@ impl MediaStreamManager {
     pub fn subscribe_events(&self) -> broadcast::Receiver<MediaEvent> {
         self.event_sender.subscribe()
     }
+
+    /// Remove a track by ID
+    ///
+    /// Returns true if the track was found and removed
+    pub fn remove_track(&mut self, track_id: &str) -> bool {
+        if let Some(pos) = self.webrtc_tracks.iter().position(|t| t.id == track_id) {
+            self.webrtc_tracks.remove(pos);
+            tracing::debug!("Removed track: {}", track_id);
+            true
+        } else {
+            tracing::warn!("Track not found for removal: {}", track_id);
+            false
+        }
+    }
 }
 
 impl Default for MediaStreamManager {

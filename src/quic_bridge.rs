@@ -79,7 +79,10 @@ pub struct RtpPacket {
 
 impl RtpPacket {
     /// Create new RTP packet
-    #[must_use]
+    ///
+    /// # Errors
+    ///
+    /// Returns error if payload exceeds maximum packet size
     pub fn new(
         payload_type: u8,
         sequence_number: u16,
@@ -87,8 +90,18 @@ impl RtpPacket {
         ssrc: u32,
         payload: Vec<u8>,
         stream_type: StreamType,
-    ) -> Self {
-        Self {
+    ) -> Result<Self> {
+        const MAX_PAYLOAD_SIZE: usize = 1188; // 1200 - 12 byte RTP header
+        
+        if payload.len() > MAX_PAYLOAD_SIZE {
+            return Err(anyhow::anyhow!(
+                "Payload size {} exceeds maximum {}",
+                payload.len(),
+                MAX_PAYLOAD_SIZE
+            ));
+        }
+
+        Ok(Self {
             version: 2,
             padding: false,
             extension: false,
@@ -100,7 +113,7 @@ impl RtpPacket {
             ssrc,
             payload,
             stream_type,
-        }
+        })
     }
 
     /// Serialize packet to bytes for QUIC transmission
@@ -117,8 +130,24 @@ impl RtpPacket {
     ///
     /// # Errors
     ///
-    /// Returns error if deserialization fails
+    /// Returns error if deserialization fails or data exceeds size limits
     pub fn from_bytes(data: &[u8]) -> Result<Self> {
+        const MAX_PACKET_SIZE: usize = 1200;
+        
+        // Validate input size before deserialization to prevent DoS
+        if data.is_empty() {
+            return Err(anyhow::anyhow!("Cannot deserialize empty data"));
+        }
+        
+        if data.len() > MAX_PACKET_SIZE {
+            return Err(anyhow::anyhow!(
+                "Data size {} exceeds maximum packet size {}",
+                data.len(),
+                MAX_PACKET_SIZE
+            ));
+        }
+        
+        // Deserialize with pre-validated size limit
         bincode::deserialize(data)
             .map_err(|e| anyhow::anyhow!("Failed to deserialize RTP packet: {}", e))
     }

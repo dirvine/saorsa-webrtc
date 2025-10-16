@@ -105,6 +105,16 @@ impl<I: PeerIdentity> CallManager<I> {
         callee: I,
         constraints: MediaConstraints,
     ) -> Result<CallId, CallError> {
+        // Enforce max_concurrent_calls limit
+        let calls = self.calls.read().await;
+        if calls.len() >= self.config.max_concurrent_calls {
+            return Err(CallError::ConfigError(format!(
+                "Maximum concurrent calls limit reached: {}",
+                self.config.max_concurrent_calls
+            )));
+        }
+        drop(calls);
+
         let call_id = CallId::new();
 
         tracing::info!("Initiating call {} to peer: {}", call_id, callee.to_string_repr());
@@ -149,15 +159,23 @@ impl<I: PeerIdentity> CallManager<I> {
 
         let call = Call {
             id: call_id,
-            remote_peer: callee,
+            remote_peer: callee.clone(),
             peer_connection,
             state: CallState::Calling,
-            constraints,
+            constraints: constraints.clone(),
             tracks,
         };
 
         let mut calls = self.calls.write().await;
         calls.insert(call_id, call);
+        
+        // Emit call initiated event
+        let _ = self.event_sender.send(CallEvent::CallInitiated {
+            call_id,
+            callee,
+            constraints,
+        });
+        
         Ok(call_id)
     }
 
@@ -173,9 +191,22 @@ impl<I: PeerIdentity> CallManager<I> {
     ) -> Result<(), CallError> {
         let mut calls = self.calls.write().await;
         if let Some(call) = calls.get_mut(&call_id) {
-            call.state = CallState::Connected;
-            tracing::info!("Call {} accepted", call_id);
-            Ok(())
+            // Validate state transition
+            match call.state {
+                CallState::Calling | CallState::Connecting => {
+                    call.state = CallState::Connected;
+                    
+                    // Emit connection established event
+                    let _ = self.event_sender.send(CallEvent::ConnectionEstablished { call_id });
+                    
+                    tracing::info!("Call {} accepted", call_id);
+                    Ok(())
+                }
+                _ => {
+                    tracing::warn!("Invalid state transition: cannot accept call {} in state {:?}", call_id, call.state);
+                    Err(CallError::InvalidState)
+                }
+            }
         } else {
             tracing::warn!("Attempted to accept non-existent call {}", call_id);
             Err(CallError::CallNotFound(call_id.to_string()))
@@ -190,8 +221,21 @@ impl<I: PeerIdentity> CallManager<I> {
     pub async fn reject_call(&self, call_id: CallId) -> Result<(), CallError> {
         let mut calls = self.calls.write().await;
         if let Some(call) = calls.get_mut(&call_id) {
-            call.state = CallState::Failed;
-            Ok(())
+            // Validate state transition - can only reject calls that are not yet connected/ended
+            match call.state {
+                CallState::Calling | CallState::Connecting => {
+                    call.state = CallState::Failed;
+                    
+                    // Emit call rejected event
+                    let _ = self.event_sender.send(CallEvent::CallRejected { call_id });
+                    
+                    Ok(())
+                }
+                _ => {
+                    tracing::warn!("Invalid state transition: cannot reject call {} in state {:?}", call_id, call.state);
+                    Err(CallError::InvalidState)
+                }
+            }
         } else {
             Err(CallError::CallNotFound(call_id.to_string()))
         }
@@ -205,8 +249,20 @@ impl<I: PeerIdentity> CallManager<I> {
     pub async fn end_call(&self, call_id: CallId) -> Result<(), CallError> {
         let mut calls = self.calls.write().await;
         if let Some(call) = calls.remove(&call_id) {
+            // Remove all tracks associated with this call from media manager
+            let mut media_manager = self.media_manager.write().await;
+            for track in &call.tracks {
+                media_manager.remove_track(&track.id);
+            }
+            drop(media_manager);
+
             // Close the peer connection
             let _ = call.peer_connection.close().await;
+            
+            // Emit call ended event
+            let _ = self.event_sender.send(CallEvent::CallEnded { call_id });
+            
+            tracing::info!("Ended call {} and cleaned up {} tracks", call_id, call.tracks.len());
             Ok(())
         } else {
             Err(CallError::CallNotFound(call_id.to_string()))
@@ -255,8 +311,14 @@ impl<I: PeerIdentity> CallManager<I> {
     pub async fn handle_answer(&self, call_id: CallId, sdp: String) -> Result<(), CallError> {
         let calls = self.calls.read().await;
         if let Some(call) = calls.get(&call_id) {
+            // Validate SDP is not empty
+            if sdp.trim().is_empty() {
+                return Err(CallError::ConfigError("SDP answer cannot be empty".to_string()));
+            }
+            
             let answer = webrtc::peer_connection::sdp::session_description::RTCSessionDescription::answer(sdp)
                 .map_err(|e| CallError::ConfigError(format!("Invalid SDP answer: {}", e)))?;
+            
             call.peer_connection.set_remote_description(answer).await
                 .map_err(|e| CallError::ConfigError(format!("Failed to set remote description: {}", e)))?;
             Ok(())
