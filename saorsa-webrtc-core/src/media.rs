@@ -9,6 +9,7 @@ use tokio::sync::broadcast;
 use webrtc::track::track_local::track_local_static_sample::TrackLocalStaticSample;
 use webrtc::rtp_transceiver::rtp_codec::RTCRtpCodecCapability;
 use crate::types::MediaType;
+use saorsa_webrtc_codecs::{VideoCodec, VideoEncoder, VideoDecoder, VideoFrame, OpenH264Encoder, OpenH264Decoder};
 
 /// Media-related errors
 #[derive(Error, Debug)]
@@ -77,10 +78,75 @@ pub struct AudioTrack {
 }
 
 /// Video track
-#[derive(Debug, Clone)]
 pub struct VideoTrack {
-    /// Track identifier
-    pub id: String,
+/// Track identifier
+pub id: String,
+    /// WebRTC track
+    pub webrtc_track: Arc<TrackLocalStaticSample>,
+    /// Video encoder (optional)
+    pub encoder: Option<Box<dyn VideoEncoder>>,
+    /// Video decoder (optional)
+    pub decoder: Option<Box<dyn VideoDecoder>>,
+    /// Track width
+    pub width: u32,
+    /// Track height
+    pub height: u32,
+}
+
+impl VideoTrack {
+    /// Create a new video track
+    pub fn new(id: String, webrtc_track: Arc<TrackLocalStaticSample>, width: u32, height: u32) -> Self {
+    Self {
+        id,
+        webrtc_track,
+        encoder: None,
+        decoder: None,
+        width,
+            height,
+        }
+    }
+
+    /// Add H.264 encoder to this track
+    pub fn with_h264_encoder(mut self) -> anyhow::Result<Self> {
+    let encoder = OpenH264Encoder::new()?;
+    self.encoder = Some(Box::new(encoder));
+    Ok(self)
+    }
+
+    /// Add H.264 decoder to this track
+    pub fn with_h264_decoder(mut self) -> anyhow::Result<Self> {
+        let decoder = OpenH264Decoder::new()?;
+        self.decoder = Some(Box::new(decoder));
+        Ok(self)
+    }
+
+    /// Encode a video frame
+    pub fn encode_frame(&mut self, frame_data: &[u8]) -> anyhow::Result<Vec<u8>> {
+        if let Some(encoder) = &mut self.encoder {
+            let frame = VideoFrame {
+                data: frame_data.to_vec(),
+                width: self.width,
+                height: self.height,
+                timestamp: 0, // TODO: Add timestamp
+            };
+            let encoded = encoder.encode(&frame)?;
+            Ok(encoded.to_vec())
+        } else {
+            // No encoder - return raw data
+            Ok(frame_data.to_vec())
+        }
+    }
+
+    /// Decode a video frame
+    pub fn decode_frame(&mut self, encoded_data: &[u8]) -> anyhow::Result<Vec<u8>> {
+        if let Some(decoder) = &mut self.decoder {
+            let frame = decoder.decode(encoded_data)?;
+            Ok(frame.data)
+        } else {
+            // No decoder - assume raw data
+            Ok(encoded_data.to_vec())
+        }
+    }
 }
 
 /// WebRTC media track wrapper
@@ -241,6 +307,53 @@ impl MediaStreamManager {
             ))
     }
 
+    /// Create a new video track with codec support
+    ///
+    /// # Errors
+    ///
+    /// Returns error if track creation fails
+    pub async fn create_video_track_with_codec(
+    &mut self,
+    codec: VideoCodec,
+    width: u32,
+    height: u32,
+    ) -> Result<VideoTrack, MediaError> {
+    let track_id = format!("video-{}", self.webrtc_tracks.len());
+
+    // Use H.264 codec for WebRTC when encoding is enabled
+    let mime_type = match codec {
+    VideoCodec::H264 => "video/H264".to_string(),
+    // VideoCodec::VP8 => "video/VP8".to_string(),
+    // VideoCodec::VP9 => "video/VP9".to_string(),
+    };
+
+    let codec_capability = RTCRtpCodecCapability {
+    mime_type,
+    clock_rate: 90000,
+    channels: 0,
+    sdp_fmtp_line: "".to_string(),
+    rtcp_feedback: vec![],
+    };
+
+    let webrtc_track = Arc::new(TrackLocalStaticSample::new(
+    codec_capability,
+    track_id.clone(),
+    "video".to_string(),
+    ));
+
+    let mut video_track = VideoTrack::new(track_id, webrtc_track, width, height);
+
+    // Add encoder based on codec
+    match codec {
+    VideoCodec::H264 => {
+    video_track = video_track.with_h264_encoder()
+    .map_err(|e| MediaError::ConfigError(e.to_string()))?;
+    }
+    }
+
+    Ok(video_track)
+    }
+
     /// Get all WebRTC tracks
     #[must_use]
     pub fn get_webrtc_tracks(&self) -> &[WebRtcTrack] {
@@ -326,6 +439,21 @@ mod tests {
         let tracks = manager.get_webrtc_tracks();
         assert_eq!(tracks.len(), 1);
         assert_eq!(tracks[0].track_type, MediaType::Video);
+    }
+
+    #[tokio::test]
+    async fn test_media_stream_manager_create_video_track_with_codec() {
+        let mut manager = MediaStreamManager::new();
+
+        let track = manager
+            .create_video_track_with_codec(VideoCodec::H264, 640, 480)
+            .await
+            .unwrap();
+
+        assert!(track.id.starts_with("video-"));
+        assert_eq!(track.width, 640);
+        assert_eq!(track.height, 480);
+        assert!(track.encoder.is_some()); // Should have H.264 encoder
     }
 
     #[tokio::test]

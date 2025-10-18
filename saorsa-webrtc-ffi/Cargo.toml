@@ -1,0 +1,25 @@
+[package]
+name = "saorsa-webrtc-ffi"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "FFI bindings for Saorsa WebRTC"
+
+[lib]
+name = "saorsa_webrtc_ffi"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+saorsa-webrtc-core = { path = "../saorsa-webrtc-core" }
+tokio.workspace = true
+once_cell = "1.19"
+
+[build-dependencies]
+cbindgen = "0.26"
+
+[target.'cfg(target_os = "ios")'.dependencies]
+core-foundation = "0.9"
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni = "0.21"
