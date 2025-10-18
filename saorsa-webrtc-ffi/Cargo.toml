@@ -11,7 +11,7 @@ name = "saorsa_webrtc_ffi"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-saorsa-webrtc-core = { path = "../saorsa-webrtc-core" }
+saorsa-webrtc-core = "0.2.0"
 tokio.workspace = true
 once_cell = "1.19"
 

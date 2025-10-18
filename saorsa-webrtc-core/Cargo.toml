@@ -56,7 +56,7 @@ rtcp = "0.13"
 rtp = "0.13"
 
 # Codec support (new)
-saorsa-webrtc-codecs = { path = "../saorsa-webrtc-codecs" }
+saorsa-webrtc-codecs = "0.2.0"
 
 # Utilities
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
