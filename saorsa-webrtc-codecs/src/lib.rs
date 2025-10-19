@@ -6,6 +6,7 @@
 //! Video and audio codec implementations
 
 pub mod openh264;
+pub mod opus;
 
 use bytes::Bytes;
 
@@ -74,3 +75,6 @@ pub trait VideoDecoder: Send + Sync {
 }
 
 pub use openh264::{OpenH264Decoder, OpenH264Encoder};
+pub use opus::{
+    AudioFrame, Channels, OpusDecoder, OpusEncoder, OpusEncoderConfig, SampleRate,
+};

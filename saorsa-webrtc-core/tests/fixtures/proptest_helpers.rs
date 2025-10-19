@@ -26,7 +26,7 @@ pub fn rtp_packet_strategy() -> impl Strategy<Value = RtpPacket> {
             Just(StreamType::Audio),
             Just(StreamType::Video),
             Just(StreamType::ScreenShare),
-            Just(StreamType::DataChannel),
+            Just(StreamType::Data),
         ],
     )
         .prop_map(|(payload_type, sequence_number, timestamp, ssrc, payload, stream_type)| {

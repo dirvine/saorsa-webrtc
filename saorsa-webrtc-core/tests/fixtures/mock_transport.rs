@@ -269,12 +269,6 @@ pub enum MockTransportError {
     Network(String),
 }
 
-impl std::fmt::Display for MockTransportError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self)
-    }
-}
-
 /// Utility functions for creating connected mock transport pairs
 pub struct MockTransportPair;
 

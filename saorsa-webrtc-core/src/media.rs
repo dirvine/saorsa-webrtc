@@ -108,7 +108,7 @@ impl VideoTrack {
 
     /// Add H.264 encoder to this track
     pub fn with_h264_encoder(mut self) -> anyhow::Result<Self> {
-        let mut encoder = OpenH264Encoder::new()?;
+        let encoder = OpenH264Encoder::new()?;
         // Configure encoder with track dimensions
         // Note: In the full implementation, this would configure the encoder
         // For now, we assume the encoder can handle the dimensions

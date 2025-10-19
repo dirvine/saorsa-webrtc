@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/master.swiftdeps"
+  },
+  "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Tests/SaorsaWebRTCTests/SaorsaWebRTCTests.swift": {
+    "dependencies": "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/SaorsaWebRTCTests.d",
+    "object": "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/SaorsaWebRTCTests.swift.o",
+    "swiftmodule": "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/SaorsaWebRTCTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/SaorsaWebRTCTests.swiftdeps",
+    "diagnostics": "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/SaorsaWebRTCTests.dia"
+  }
+}

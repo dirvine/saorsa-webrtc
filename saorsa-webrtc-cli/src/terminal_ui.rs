@@ -399,16 +399,22 @@ impl TerminalUI {
     }
 
     /// Display a video frame
-    pub fn display_frame(&mut self, _frame_data: &[u8]) -> Result<()> {
+    pub fn display_frame(&mut self, frame_data: &[u8]) -> Result<()> {
         match self.display_mode {
             DisplayMode::Sixel => {
-                // TODO: Convert frame to Sixel and display
-                // This would require integrating with a Sixel library
+                // For Sixel, frame_data should be raw RGB/YUV
+                // In production, we'd convert to image and render with sixel protocol
+                // For now, just validate the data
+                if frame_data.is_empty() {
+                    return Err(anyhow::anyhow!("Empty frame data"));
+                }
                 Ok(())
             }
             DisplayMode::Ascii => {
-                // TODO: Convert frame to ASCII art
-                // This could use libraries like viuer or custom ASCII conversion
+                // For ASCII, we'd downsample and convert to characters
+                if frame_data.is_empty() {
+                    return Err(anyhow::anyhow!("Empty frame data"));
+                }
                 Ok(())
             }
             DisplayMode::None => Ok(()),

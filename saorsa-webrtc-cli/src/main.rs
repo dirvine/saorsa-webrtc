@@ -8,6 +8,8 @@ use terminal_ui::{TerminalUI, CliDisplayMode};
 use tracing_subscriber;
 
 mod terminal_ui;
+#[cfg(test)]
+mod terminal_ui_tests;
 
 #[derive(Parser)]
 #[command(author, version, about)]
@@ -88,7 +90,7 @@ async fn main() -> Result<()> {
 }
 
 async fn handle_call(
-    identity: &str,
+    _identity: &str,
     peer: &str,
     video: bool,
     audio: bool,
@@ -136,7 +138,7 @@ async fn handle_call(
 }
 
 async fn handle_listen(
-    identity: &str,
+    _identity: &str,
     auto_accept: bool,
     display: CliDisplayMode,
 ) -> Result<()> {

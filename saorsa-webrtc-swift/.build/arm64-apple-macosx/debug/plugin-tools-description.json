@@ -1,0 +1,652 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.xctest/Contents/MacOS/SaorsaWebRTCPackageTests",
+      "packagePath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift",
+      "productName" : "SaorsaWebRTCPackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.SaorsaWebRTC-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/sources",
+      "importPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Sources/SaorsaWebRTC/SaorsaWebRTC.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "SaorsaWebRTC",
+      "moduleOutputPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules/SaorsaWebRTC.swiftmodule",
+      "objects" : [
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/SaorsaWebRTC.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx11.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-Xcc",
+        "-fmodule-map-file=/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Sources/SaorsaWebRTCFFI/module.modulemap",
+        "-module-cache-path",
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/include/SaorsaWebRTC-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "saorsa_webrtc_swift"
+      ],
+      "outputFileMapPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/SaorsaWebRTC.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules/SaorsaWebRTC.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Sources/SaorsaWebRTC/SaorsaWebRTC.swift"
+      ],
+      "tempsPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.SaorsaWebRTCPackageTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build/sources",
+      "importPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules/SaorsaWebRTCTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "SaorsaWebRTCPackageTests",
+      "moduleOutputPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules/SaorsaWebRTCPackageTests.swiftmodule",
+      "objects" : [
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx11.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-Xcc",
+        "-fmodule-map-file=/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Sources/SaorsaWebRTCFFI/module.modulemap",
+        "-module-cache-path",
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build/include/SaorsaWebRTCPackageTests-Swift.h",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "saorsa_webrtc_swift"
+      ],
+      "outputFileMapPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules/SaorsaWebRTCPackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.SaorsaWebRTCTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/sources",
+      "importPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Tests/SaorsaWebRTCTests/SaorsaWebRTCTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules/SaorsaWebRTC.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "SaorsaWebRTCTests",
+      "moduleOutputPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules/SaorsaWebRTCTests.swiftmodule",
+      "objects" : [
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/SaorsaWebRTCTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-Xcc",
+        "-fmodule-map-file=/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Sources/SaorsaWebRTCFFI/module.modulemap",
+        "-module-cache-path",
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "saorsa_webrtc_swift"
+      ],
+      "outputFileMapPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/SaorsaWebRTCTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules/SaorsaWebRTCTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Tests/SaorsaWebRTCTests/SaorsaWebRTCTests.swift"
+      ],
+      "tempsPath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "SaorsaWebRTC" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "SaorsaWebRTC",
+      "-package-name",
+      "saorsa_webrtc_swift",
+      "-c",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Sources/SaorsaWebRTC/SaorsaWebRTC.swift",
+      "-I",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx11.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-Xcc",
+      "-fmodule-map-file=/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Sources/SaorsaWebRTCFFI/module.modulemap",
+      "-module-cache-path",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/include/SaorsaWebRTC-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "saorsa_webrtc_swift",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "SaorsaWebRTCPackageTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "SaorsaWebRTCPackageTests",
+      "-package-name",
+      "saorsa_webrtc_swift",
+      "-c",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.derived/runner.swift",
+      "-I",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx11.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-Xcc",
+      "-fmodule-map-file=/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Sources/SaorsaWebRTCFFI/module.modulemap",
+      "-module-cache-path",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build/include/SaorsaWebRTCPackageTests-Swift.h",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "saorsa_webrtc_swift",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "SaorsaWebRTCTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "SaorsaWebRTCTests",
+      "-package-name",
+      "saorsa_webrtc_swift",
+      "-c",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Tests/SaorsaWebRTCTests/SaorsaWebRTCTests.swift",
+      "-I",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-Xcc",
+      "-fmodule-map-file=/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Sources/SaorsaWebRTCFFI/module.modulemap",
+      "-module-cache-path",
+      "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "saorsa_webrtc_swift",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "SaorsaWebRTC" : [
+      "SaorsaWebRTCFFI"
+    ],
+    "SaorsaWebRTCPackageTests" : [
+      "SaorsaWebRTCTests",
+      "SaorsaWebRTC",
+      "SaorsaWebRTCFFI"
+    ],
+    "SaorsaWebRTCTests" : [
+      "SaorsaWebRTC",
+      "SaorsaWebRTCFFI"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+    "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.derived/runner.swift" : {
+      "inputs" : [
+
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Sources/SaorsaWebRTC/SaorsaWebRTC.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/sources"
+    },
+    "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build/sources"
+    },
+    "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/SaorsaWebRTC.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/SaorsaWebRTCTests.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCPackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/Tests/SaorsaWebRTCTests/SaorsaWebRTCTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTCTests.build/sources"
+    },
+    "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

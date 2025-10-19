@@ -1,0 +1,3 @@
+module SaorsaWebRTC {
+    header "/Users/davidirvine/Desktop/Devel/projects/saorsa-webrtc/saorsa-webrtc-swift/.build/arm64-apple-macosx/debug/SaorsaWebRTC.build/include/SaorsaWebRTC-Swift.h"
+}

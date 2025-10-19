@@ -1,0 +1,5 @@
+module SaorsaWebRTCFFI {
+    header "saorsa_webrtc_ffi.h"
+    link "saorsa_webrtc_ffi"
+    export *
+}
