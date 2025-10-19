@@ -12,7 +12,7 @@
 //! # Examples
 //!
 //! ```rust,no_run
-//! use saorsa_webrtc::{WebRtcService, MediaConstraints, SignalingHandler, AntQuicTransport, TransportConfig};
+//! use saorsa_webrtc_core::{WebRtcService, MediaConstraints, SignalingHandler, AntQuicTransport, TransportConfig, PeerIdentityString};
 //! use std::sync::Arc;
 //!
 //! # async fn example() -> anyhow::Result<()> {
@@ -21,17 +21,17 @@
 //! let signaling = Arc::new(SignalingHandler::new(transport));
 //!
 //! // Create WebRTC service
-//! let service = WebRtcService::<saorsa_webrtc::PeerIdentityString, AntQuicTransport>::new(
+//! let service = WebRtcService::<PeerIdentityString, AntQuicTransport>::new(
 //!     signaling,
 //!     Default::default()
 //! ).await?;
 //!
-//! // Start the service
+//! // Start service
 //! service.start().await?;
 //!
 //! // Initiate a video call
 //! let call_id = service.initiate_call(
-//!     saorsa_webrtc::PeerIdentityString::new("eve-frank-grace-henry"),
+//!     PeerIdentityString::new("eve-frank-grace-henry"),
 //!     MediaConstraints::video_call()
 //! ).await?;
 //! # Ok(())

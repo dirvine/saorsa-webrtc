@@ -1,7 +1,7 @@
 //! TDD tests for RTP over QUIC bridge
 
-use saorsa_webrtc::quic_bridge::{RtpPacket, StreamType, WebRtcQuicBridge, QuicBridgeConfig};
-use saorsa_webrtc::transport::{AntQuicTransport, TransportConfig};
+use saorsa_webrtc_core::quic_bridge::{RtpPacket, StreamType, WebRtcQuicBridge, QuicBridgeConfig};
+use saorsa_webrtc_core::transport::{AntQuicTransport, TransportConfig};
 use std::time::Duration;
 
 #[tokio::test]
@@ -79,7 +79,7 @@ async fn test_bridge_send_rtp_packet() {
 }
 
 #[tokio::test]
-#[ignore] // Flaky test due to bidirectional connection issues in transport layer
+#[ignore] // TODO: Fix message routing in ant-quic transport layer
 async fn test_bridge_send_receive_roundtrip() {
     // Create two transports
     let mut transport1 = AntQuicTransport::new(TransportConfig::default());
@@ -94,7 +94,12 @@ async fn test_bridge_send_receive_roundtrip() {
     let _peer_id = transport1.connect_to_peer(addr2).await
         .expect("Failed to connect");
     
-    tokio::time::sleep(Duration::from_millis(200)).await;
+    // Give time for connection to establish
+    tokio::time::sleep(Duration::from_millis(1000)).await;
+    
+    // Note: We can't check is_connected directly since we moved the transports
+    // The connection issue is a known limitation of ant-quic in test environments
+    println!("Starting bridge test - connection issues may cause test to skip");
     
     // Create bridges
     let bridge1 = WebRtcQuicBridge::with_transport(QuicBridgeConfig::default(), transport1);

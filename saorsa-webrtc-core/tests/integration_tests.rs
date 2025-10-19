@@ -1,12 +1,12 @@
 //! Integration tests for end-to-end WebRTC functionality
 
-use saorsa_webrtc::prelude::*;
-use saorsa_webrtc::{CallId, CallManager, CallManagerConfig, MediaConstraints, MediaStreamManager, SignalingHandler, SignalingMessageType};
+use saorsa_webrtc_core::{CallId, CallManager, CallManagerConfig, MediaConstraints, MediaStreamManager, SignalingHandler, SignalingTransport, PeerIdentityString, CallState, MediaType};
+use saorsa_webrtc_core::signaling::SignalingMessage;
 use std::sync::Arc;
 
 // Mock transport for integration testing
 struct MockSignalingTransport {
-    peer_messages: std::sync::Mutex<std::collections::HashMap<String, Vec<SignalingMessageType>>>,
+    peer_messages: std::sync::Mutex<std::collections::HashMap<String, Vec<SignalingMessage>>>,
 }
 
 impl MockSignalingTransport {
@@ -16,14 +16,14 @@ impl MockSignalingTransport {
         }
     }
 
-    fn send_to_peer(&self, peer: &str, message: SignalingMessageType) {
+    fn send_to_peer(&self, peer: &str, message: SignalingMessage) {
         self.peer_messages.lock().unwrap()
             .entry(peer.to_string())
             .or_default()
             .push(message);
     }
 
-    fn receive_from_peer(&self, peer: &str) -> Option<SignalingMessageType> {
+    fn receive_from_peer(&self, peer: &str) -> Option<SignalingMessage> {
         self.peer_messages.lock().unwrap()
             .get_mut(peer)
             .and_then(|messages| messages.pop())
@@ -38,13 +38,13 @@ impl SignalingTransport for MockSignalingTransport {
     async fn send_message(
         &self,
         peer: &String,
-        message: SignalingMessageType,
+        message: SignalingMessage,
     ) -> Result<(), Self::Error> {
         self.send_to_peer(peer, message);
         Ok(())
     }
 
-    async fn receive_message(&self) -> Result<(String, SignalingMessageType), Self::Error> {
+    async fn receive_message(&self) -> Result<(String, SignalingMessage), Self::Error> {
         // For integration tests, we'll simulate message passing differently
         // This is a simplified version - in real integration we'd have message queues
         Err(std::io::Error::new(std::io::ErrorKind::WouldBlock, "No messages"))
@@ -116,21 +116,21 @@ async fn test_media_track_creation_integration() {
 
 #[tokio::test]
 async fn test_quic_stream_management_integration() {
-    let mut stream_manager = saorsa_webrtc::quic_streams::QuicMediaStreamManager::new(
-        saorsa_webrtc::quic_streams::QoSParams::audio()
+    let mut stream_manager = saorsa_webrtc_core::quic_streams::QuicMediaStreamManager::new(
+        saorsa_webrtc_core::quic_streams::QoSParams::audio()
     );
 
     // Create different types of streams
     let audio_stream_id = stream_manager.create_stream(
-        saorsa_webrtc::quic_streams::MediaStreamType::Audio
+        saorsa_webrtc_core::quic_streams::MediaStreamType::Audio
     ).unwrap();
 
     let video_stream_id = stream_manager.create_stream(
-        saorsa_webrtc::quic_streams::MediaStreamType::Video
+        saorsa_webrtc_core::quic_streams::MediaStreamType::Video
     ).unwrap();
 
     let screen_stream_id = stream_manager.create_stream(
-        saorsa_webrtc::quic_streams::MediaStreamType::ScreenShare
+        saorsa_webrtc_core::quic_streams::MediaStreamType::ScreenShare
     ).unwrap();
 
     // Verify streams were created
@@ -140,10 +140,10 @@ async fn test_quic_stream_management_integration() {
 
     // Verify stream properties
     let audio_stream = stream_manager.get_stream(audio_stream_id).unwrap();
-    assert_eq!(audio_stream.stream_type, saorsa_webrtc::quic_streams::MediaStreamType::Audio);
+    assert_eq!(audio_stream.stream_type, saorsa_webrtc_core::quic_streams::MediaStreamType::Audio);
 
     let video_stream = stream_manager.get_stream(video_stream_id).unwrap();
-    assert_eq!(video_stream.stream_type, saorsa_webrtc::quic_streams::MediaStreamType::Video);
+    assert_eq!(video_stream.stream_type, saorsa_webrtc_core::quic_streams::MediaStreamType::Video);
 
     // Test stream operations
     let data = vec![1, 2, 3, 4, 5];
@@ -163,7 +163,7 @@ async fn test_signaling_transport_integration() {
     let transport = MockSignalingTransport::new();
 
     // Test sending messages
-    let offer = SignalingMessageType::Offer {
+    let offer = SignalingMessage::Offer {
         session_id: "test-session".to_string(),
         sdp: "test-sdp".to_string(),
         quic_endpoint: None,
